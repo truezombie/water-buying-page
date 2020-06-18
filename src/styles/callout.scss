@@ -1,0 +1,19 @@
+$bg_callout_color: rgba(19, 124, 189, 0.15);
+
+.callout {
+  background-color: $bg_callout_color;
+  padding: 1rem;
+  border-radius: $border_radius;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  &-icon {
+    margin-right: 1rem;
+    color: $color_primary_dark;
+  }
+  &-description {
+    line-height: 1.5rem;
+    font-size: 0.9rem;
+  }
+}

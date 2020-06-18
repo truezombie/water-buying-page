@@ -1,0 +1,45 @@
+.page-info-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  &-header {
+    font-size: 1.5rem;
+    margin: 0 0 1rem 0;
+    color: $color_primary_main;
+  }
+  &-description {
+    margin: 0;
+    line-height: 2rem;
+  }
+
+  &.success {
+    .page-info-wrapper {
+      &-header {
+        color: $color_success_main;
+      }
+    }
+  }
+  &.error {
+    .page-info-wrapper {
+      &-header {
+        color: $color_error_main;
+      }
+    }
+  }
+  &.warning {
+    .page-info-wrapper {
+      &-header {
+        color: $color_warning_main;
+      }
+    }
+  }
+  &.info {
+    .page-info-wrapper {
+      &-header {
+        color: $color_primary_main;
+      }
+    }
+  }
+}

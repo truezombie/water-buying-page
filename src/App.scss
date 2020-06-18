@@ -1,0 +1,132 @@
+$bg_main_color: #f0f2f5;
+$bg_light_color: #fff;
+
+$text_color_main: #323232;
+$text_color_white: #fff;
+
+$color_primary_light: #48aff0;
+$color_primary_main: #137cbd;
+$color_primary_dark: #0e5a8a;
+
+$color_success_light: #3dcc91;
+$color_success_main: #0f9960;
+$color_success_dark: #0a6640;
+
+$color_warning_light: #ffb366;
+$color_warning_main: #d9822b;
+$color_warning_dark: #a66321;
+
+$color_error_light: #ff7373;
+$color_error_main: #db3737;
+$color_error_dark: #a82a2a;
+
+$border_radius: 3px;
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.pageWrapper {
+  max-width: 500px;
+  height: 100%;
+  margin: 0 auto;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+label {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  width: 100%;
+}
+
+input {
+  font-size: 1.8rem;
+  display: inline-block;
+  width: 100%;
+  box-sizing: border-box;
+  border: none;
+  border-radius: $border_radius;
+  padding: 1rem;
+  background-color: $bg_main_color;
+  outline: none;
+  -webkit-appearance: none;
+}
+
+input[type="number"] {
+  box-shadow: 0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0),
+    inset 0 0 0 1px rgba(16, 22, 26, 0.15),
+    inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  margin-bottom: 1rem;
+  &:focus {
+    transition: 0.3s;
+    box-shadow: 0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3),
+      inset 0 1px 1px rgba(16, 22, 26, 0.2);
+  }
+}
+
+input[type="button"] {
+  font-size: 1.8rem;
+  background-color: $color_primary_main;
+  color: $text_color_white;
+  &:active {
+    background-color: darken($color_primary_main, 3);
+  }
+  &:hover {
+    background-color: darken($color_primary_main, 3);
+  }
+}
+
+html {
+  font-size: 14px;
+  color: $text_color_main;
+}
+
+body {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  background-color: $bg_main_color;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 1rem;
+  h1 {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+  }
+}
+
+footer {
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.box {
+  min-height: 60px;
+  padding: 1rem;
+  background-color: $bg_light_color;
+  box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.15), 0 0 0 rgba(16, 22, 26, 0),
+    0 0 0 rgba(16, 22, 26, 0);
+  border-radius: $border_radius;
+}
+
+.money {
+  font-size: 2rem;
+}
+
+.payment-methods-link {
+  display: inline-block;
+  margin: 1rem 0;
+  color: $color_primary_main;
+  text-decoration: none;
+  font-size: 1.2rem;
+  &:hover {
+    color: $color_primary_light;
+  }
+}
+
+@import "./styles/callout.scss";
+@import "./styles/pageInfo.scss";
