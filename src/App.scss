@@ -22,6 +22,13 @@ $color_error_dark: #a82a2a;
 
 $border_radius: 3px;
 
+$border-default: 0 0 0 1px rgba(16, 22, 26, 0.15), 0 0 0 rgba(16, 22, 26, 0),
+  0 0 0 rgba(16, 22, 26, 0);
+$input-border: 0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0),
+  inset 0 0 0 1px rgba(16, 22, 26, 0.15), inset 0 1px 1px rgba(16, 22, 26, 0.2);
+$input-border-focus: 0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3),
+  inset 0 1px 1px rgba(16, 22, 26, 0.2);
+
 html,
 body,
 #root {
@@ -57,14 +64,10 @@ input {
 }
 
 input[type="number"] {
-  box-shadow: 0 0 0 0 rgba(19, 124, 189, 0), 0 0 0 0 rgba(19, 124, 189, 0),
-    inset 0 0 0 1px rgba(16, 22, 26, 0.15),
-    inset 0 1px 1px rgba(16, 22, 26, 0.2);
-  margin-bottom: 1rem;
+  box-shadow: $input-border;
   &:focus {
     transition: 0.3s;
-    box-shadow: 0 0 0 1px #137cbd, 0 0 0 3px rgba(19, 124, 189, 0.3),
-      inset 0 1px 1px rgba(16, 22, 26, 0.2);
+    box-shadow: $input-border-focus;
   }
 }
 
@@ -72,6 +75,7 @@ input[type="button"] {
   font-size: 1.8rem;
   background-color: $color_primary_main;
   color: $text_color_white;
+  font-weight: bold;
   &:active {
     background-color: darken($color_primary_main, 3);
   }
@@ -108,8 +112,7 @@ footer {
   min-height: 60px;
   padding: 1rem;
   background-color: $bg_light_color;
-  box-shadow: 0 0 0 1px rgba(16, 22, 26, 0.15), 0 0 0 rgba(16, 22, 26, 0),
-    0 0 0 rgba(16, 22, 26, 0);
+  box-shadow: $border-default;
   border-radius: $border_radius;
 }
 
@@ -128,5 +131,23 @@ footer {
   }
 }
 
+.form-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  &-input {
+    margin-right: 0.5rem;
+    flex-grow: 1;
+  }
+  &-amount {
+    width: 60px;
+    font-size: 1.4rem;
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+}
+
+@import "./styles/helpers.scss";
 @import "./styles/callout.scss";
 @import "./styles/pageInfo.scss";
+@import "./styles/loader.scss";
