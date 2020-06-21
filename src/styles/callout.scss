@@ -1,7 +1,5 @@
-$bg_callout_color: rgba(19, 124, 189, 0.15);
-
 .callout {
-  background-color: $bg_callout_color;
+  background-color: lighten($color_primary_light, 25);
   padding: 1rem;
   border-radius: $border_radius;
   margin-bottom: 1rem;
@@ -15,5 +13,33 @@ $bg_callout_color: rgba(19, 124, 189, 0.15);
   &-description {
     line-height: 1.5rem;
     font-size: 0.9rem;
+  }
+}
+
+.callout.info {
+  background-color: lighten($color_primary_light, 25) !important;
+  .callout-icon {
+    color: $color_primary_dark !important;
+  }
+}
+
+.callout.error {
+  background-color: lighten($color_error_light, 25) !important;
+  .callout-icon {
+    color: $color_error_dark !important;
+  }
+}
+
+.callout.success {
+  background-color: lighten($color_success_light, 25) !important;
+  .callout-icon {
+    color: $color_success_dark !important;
+  }
+}
+
+.callout.warning {
+  background-color: lighten($color_warning_light, 25) !important;
+  .callout-icon {
+    color: $color_warning_dark !important;
   }
 }

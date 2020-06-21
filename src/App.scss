@@ -36,7 +36,7 @@ body,
 }
 
 .pageWrapper {
-  max-width: 500px;
+  max-width: 450px;
   height: 100%;
   margin: 0 auto;
   padding: 1rem;
@@ -63,7 +63,7 @@ input {
   -webkit-appearance: none;
 }
 
-input[type="number"] {
+input[type="text"] {
   box-shadow: $input-border;
   &:focus {
     transition: 0.3s;
@@ -151,3 +151,4 @@ footer {
 @import "./styles/callout.scss";
 @import "./styles/pageInfo.scss";
 @import "./styles/loader.scss";
+@import "./styles/phones.scss";

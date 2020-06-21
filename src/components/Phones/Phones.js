@@ -8,7 +8,7 @@ const Phones = ({ phones }) => {
     <div>
       {phones.map((phone) => {
         return (
-          <div key={phone}>
+          <div className="phone" key={phone}>
             <PhoneIco />
             <a href={`tel:${phone}`}>{phone}</a>
           </div>
@@ -19,7 +19,7 @@ const Phones = ({ phones }) => {
 };
 
 Phones.propTypes = {
-  phones: PropTypes.arrayOf(PropTypes.number),
+  phones: PropTypes.arrayOf(PropTypes.string),
 };
 
 export default Phones;

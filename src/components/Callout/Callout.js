@@ -1,9 +1,21 @@
 import React from "react";
 import PropTypes from "prop-types";
+import cx from "classnames";
 
-const Callout = ({ text }) => {
+const Callout = ({ text, type }) => {
+  console.log(type);
   return (
-    <div className="callout">
+    <div
+      className={cx(
+        {
+          info: type === "info",
+          error: type === "error",
+          success: type === "success",
+          warning: type === "warning",
+        },
+        "callout"
+      )}
+    >
       <div className="callout-icon">
         <svg data-icon="info-sign" width="20" height="20" viewBox="0 0 20 20">
           <desc>info-sign</desc>
@@ -20,6 +32,7 @@ const Callout = ({ text }) => {
 
 Callout.propTypes = {
   text: PropTypes.string,
+  type: PropTypes.oneOf(["success", "error", "warning", "info"]),
 };
 
 export default Callout;
