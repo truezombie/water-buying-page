@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import cx from "classnames";
 
 const Callout = ({ text, type }) => {
-  console.log(type);
   return (
     <div
       className={cx(

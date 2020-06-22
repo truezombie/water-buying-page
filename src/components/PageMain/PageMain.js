@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { Link } from "react-router-dom";
 
 import Loader from "../Loader";
 import Phones from "../Phones";
@@ -7,19 +6,34 @@ import Callout from "../Callout";
 import PageInfo from "../PageInfo";
 
 import { waterAmountLabel } from "../../utils/formats";
-import { LINK_GET_DATA } from "./constants";
+import { isLitersValid, isMoneyValid } from "../../utils/validation";
+import { responseStatuses } from "../../constants/statuses";
+import {
+  getDiscountMessage,
+  getMessageNoEnoughWater,
+} from "../../utils/messages";
 import config from "../../config";
 
+import { appData } from "./mocked";
+
 const initialState = {
-  address: "",
-  available: true,
-  cost: 0,
+  automate_number: 0,
+  town: "",
+  street: "",
+  build: 0,
+  phones: [],
+  maxLiters: 50, // TODO: need to delete
+  water_available: 0,
+  price: 0,
   discounts: [],
-  maxLiters: 0,
+  status: "OK",
+  error: "OK",
 };
 
 const PageMain = () => {
   const [data, setData] = useState(initialState);
+  const [wantToPay, setWantToPay] = useState(false);
+  const [isCardPaymentMethod, setCardCardPaymentMethod] = useState(false);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [inputsData, setInputsData] = useState({
@@ -33,16 +47,17 @@ const PageMain = () => {
 
   const getDiscount = (liters) => {
     const discountItem = data.discounts.find(
-      (item) => Number(liters) >= item.min && Number(liters) <= item.max
+      (item) =>
+        Number(liters) >= item.start_range && Number(liters) < item.end_range
     );
 
-    return discountItem ? discountItem.discount : 0;
+    return discountItem ? discountItem.discount / 100 : 0;
   };
 
-  const getLitersByMoney = (money, cost) => {
-    const liters = Number(money / cost).toFixed(1);
+  const getLitersByMoney = (money, price) => {
+    const liters = Number(money / price).toFixed(1);
     const discount = getDiscount(liters);
-    const litersDiscount = discount !== 0 ? discount * (cost * liters) : 0;
+    const litersDiscount = discount !== 0 ? discount * (price * liters) : 0;
 
     return {
       liters: Number(liters - litersDiscount).toFixed(1),
@@ -50,8 +65,8 @@ const PageMain = () => {
     };
   };
 
-  const getMoneyByLiters = (liters, cost) => {
-    const money = Number(liters * cost).toFixed(2);
+  const getMoneyByLiters = (liters, price) => {
+    const money = Number(liters * price).toFixed(2);
     const discount = getDiscount(liters);
     const moneyDiscount = discount !== 0 ? discount * money : 0;
 
@@ -61,26 +76,16 @@ const PageMain = () => {
     };
   };
 
-  const isLitersValid = (value) => {
-    return /^\d*(\.\d{0,1})?$/.test(value);
-  };
-
-  const isMoneyValid = (value) => {
-    return /^\d*(\.\d{0,2})?$/.test(value);
-  };
-
   const getValidationMessage = (discount, liters, maxLiters) => {
     if (liters > maxLiters) {
       return {
-        message: `На данний момент в водоматі немає бажаної кiлькостi води. Доступно ${maxLiters} ${waterAmountLabel(
-          maxLiters
-        )}`,
+        message: getMessageNoEnoughWater(maxLiters),
         messageType: "error",
       };
     } else if (Number(discount) !== 0) {
       return {
-        message: `Ваша знижка ${discount * 100}%`,
-        messageType: "success",
+        message: getDiscountMessage(discount),
+        messageType: "info",
       };
     }
 
@@ -94,17 +99,17 @@ const PageMain = () => {
     const liters = event.target.value;
 
     if (isLitersValid(liters)) {
-      const { maxLiters } = data;
+      const { water_available } = data;
       const { discount, money } = getMoneyByLiters(
         event.target.value,
-        data.cost
+        data.price
       );
 
       setInputsData({
         ...inputsData,
         money,
         liters: liters,
-        info: getValidationMessage(discount, liters, maxLiters),
+        info: getValidationMessage(discount, liters, water_available),
       });
     }
   };
@@ -113,37 +118,36 @@ const PageMain = () => {
     const money = event.target.value;
 
     if (isMoneyValid(money)) {
-      const { maxLiters } = data;
+      const { water_available } = data;
       const { discount, liters } = getLitersByMoney(
         event.target.value,
-        data.cost
+        data.price
       );
 
       setInputsData({
         ...inputsData,
         liters,
         money: money,
-        info: getValidationMessage(discount, liters, maxLiters),
+        info: getValidationMessage(discount, liters, water_available),
       });
     }
   };
 
-  const getData = async () => {
+  const onToggleWantToPay = () => {
+    setWantToPay(!wantToPay);
+  };
+
+  const onTogglePaymentMethod = () => {
+    setCardCardPaymentMethod(!isCardPaymentMethod);
+  };
+
+  const getWaterMachineData = async () => {
     try {
-      // const response = await fetch(LINK_GET_DATA);
-      // const json = await response.json();
+      // const waterMachine = await fetch(LINK_GET_DATA);
+      // const waterMachineAvailable = await fetch(LINK_GET_DATA);
+
       setData({
-        address: "вул.Познанська 7",
-        available: false,
-        cost: 0.8,
-        discounts: [
-          { discount: 0, max: 9, min: 0 },
-          { discount: 0.2, max: 19, min: 10 },
-          { discount: 0.3, max: 29, min: 20 },
-          { discount: 0.4, max: 100, min: 30 },
-        ],
-        length: 4,
-        maxLiters: 50,
+        ...appData,
       });
     } catch (error) {
       setError(
@@ -159,39 +163,43 @@ const PageMain = () => {
   }, [loading, data]);
 
   useEffect(() => {
-    getData();
+    getWaterMachineData();
   }, []);
 
   useEffect(() => {
-    if (window.$checkout && !loading && data) {
-      // window.$checkout
-      //   .get("PaymentButton", {
-      //     element: ".payment-button-container",
-      //     style: {
-      //       type: "long",
-      //       color: "black",
-      //       height: 60,
-      //     },
-      //     data: {
-      //       merchant_id: 1396424,
-      //       currency: "UAH",
-      //       amount: inputsData.money,
-      //     },
-      //   })
-      //   .on("success", (model) => {
-      //     console.log("success", model);
-      //   })
-      //   .on("error", (model) => {
-      //     console.log("error", model);
-      //   });
+    if (
+      !isCardPaymentMethod &&
+      window.$checkout &&
+      wantToPay &&
+      inputsData.money
+    ) {
+      window.$checkout
+        .get("PaymentButton", {
+          element: ".payment-button-container",
+          style: {
+            type: "long",
+            color: "black",
+            height: 60,
+          },
+          data: {
+            merchant_id: config.merchant_id,
+            currency: config.currency,
+            amount: inputsData.money,
+          },
+        })
+        .on("success", (model) => {
+          console.log("success", model);
+        })
+        .on("error", (model) => {
+          console.log("error", model);
+        });
     }
-  }, [data, loading, inputsData.money]);
+  }, [wantToPay, isCardPaymentMethod, inputsData.money]);
 
-  if (data && !data.available) {
+  // TODO: need to fix
+  if (data && data.error === responseStatuses.error) {
     new Error("На данный момент водомат не доступный");
   }
-
-  console.log(inputsData);
 
   return (
     <>
@@ -207,11 +215,11 @@ const PageMain = () => {
         <>
           <header className="box">
             <h1>Придбання води в водоматi</h1>
-            <p>{data.address}</p>
-            <Phones phones={config.phones} />
+            <p>{`${data.town} ${data.street}, ${data.build}`}</p>
+            <Phones phones={data.phones} />
           </header>
 
-          <main className="box">
+          <main className="box mb-1-rem">
             <Callout text="Для придбання води вы можете ввести бажану кiлькiсть літрів або суму грошей" />
 
             {inputsData.info.message ? (
@@ -230,6 +238,7 @@ const PageMain = () => {
                   placeholder="0"
                   id="input-water-amount"
                   type="text"
+                  disabled={wantToPay}
                 />
               </div>
               <div className="form-group-amount">
@@ -246,18 +255,33 @@ const PageMain = () => {
                   placeholder="0"
                   id="input-money-amount"
                   type="text"
+                  disabled={wantToPay}
                 />
               </div>
               <div className="form-group-amount">грн</div>
             </div>
-            <div className="payment-button-container" />
+            <input
+              onClick={onToggleWantToPay}
+              className="mt-1-rem"
+              type="button"
+              disabled={inputsData.money == 0}
+              value={wantToPay ? "Відредагувати" : "Сплатити"}
+            />
           </main>
-
-          <footer>
-            <Link className="payment-methods-link" to="/payment-methods">
-              Методи оплати
-            </Link>
+        </>
+      ) : null}
+      {wantToPay ? (
+        <>
+          <footer className="box mb-1-rem">
+            {isCardPaymentMethod ? (
+              <div>card</div>
+            ) : (
+              <div className="payment-button-container" />
+            )}
           </footer>
+          <p onClick={onTogglePaymentMethod} className="payment-another-method">
+            {isCardPaymentMethod ? "Сплатити телефоном" : "Сплатити карткою"}
+          </p>
         </>
       ) : null}
     </>

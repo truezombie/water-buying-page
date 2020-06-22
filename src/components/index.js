@@ -5,14 +5,5 @@ import ErrorBoundary from "./ErrorBoundary";
 
 import PageMain from "./PageMain";
 import PageInfoFound from "./PageInfo";
-import PagePaymentMethods from "./PagePaymentMethods";
 
-export {
-  Callout,
-  PageMain,
-  Loader,
-  Phones,
-  ErrorBoundary,
-  PageInfoFound,
-  PagePaymentMethods,
-};
+export { Callout, PageMain, Loader, Phones, ErrorBoundary, PageInfoFound };

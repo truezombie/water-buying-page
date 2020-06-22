@@ -1,5 +1,6 @@
 .callout {
   background-color: lighten($color_primary_light, 25);
+  border: 1px solid $color_primary_light;
   padding: 1rem;
   border-radius: $border_radius;
   margin-bottom: 1rem;
@@ -18,6 +19,7 @@
 
 .callout.info {
   background-color: lighten($color_primary_light, 25) !important;
+  border: 1px solid $color_primary_light;
   .callout-icon {
     color: $color_primary_dark !important;
   }
@@ -25,6 +27,7 @@
 
 .callout.error {
   background-color: lighten($color_error_light, 25) !important;
+  border: 1px solid $color_error_light;
   .callout-icon {
     color: $color_error_dark !important;
   }
@@ -32,6 +35,7 @@
 
 .callout.success {
   background-color: lighten($color_success_light, 25) !important;
+  border: 1px solid $color_success_light;
   .callout-icon {
     color: $color_success_dark !important;
   }
@@ -39,6 +43,7 @@
 
 .callout.warning {
   background-color: lighten($color_warning_light, 25) !important;
+  border: 1px solid $color_warning_light;
   .callout-icon {
     color: $color_warning_dark !important;
   }
