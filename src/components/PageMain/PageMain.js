@@ -14,8 +14,6 @@ import {
 } from "../../utils/messages";
 import config from "../../config";
 
-import { appData } from "./mocked";
-
 const initialState = {
   automate_number: 0,
   town: "",
@@ -147,7 +145,7 @@ const PageMain = () => {
       // const waterMachineAvailable = await fetch(LINK_GET_DATA);
 
       setData({
-        ...appData,
+        ...initialState,
       });
     } catch (error) {
       setError(
@@ -196,9 +194,14 @@ const PageMain = () => {
     }
   }, [wantToPay, isCardPaymentMethod, inputsData.money]);
 
-  // TODO: need to fix
-  if (data && data.error === responseStatuses.error) {
-    new Error("На данный момент водомат не доступный");
+  console.log(error);
+
+  if (data.error === responseStatuses.error || error.message) {
+    throw new Error("Виникла помилка при отриманнi данних платіжної сторінки.");
+  }
+
+  if (data.status === responseStatuses.error) {
+    throw new Error("На данний момент продаж води в водоматі не доступний.");
   }
 
   return (
@@ -264,7 +267,7 @@ const PageMain = () => {
               onClick={onToggleWantToPay}
               className="mt-1-rem"
               type="button"
-              disabled={inputsData.money == 0}
+              disabled={Number(inputsData.money) === 0}
               value={wantToPay ? "Відредагувати" : "Сплатити"}
             />
           </main>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import ErrorBoundary from "./components/ErrorBoundary";
@@ -6,10 +6,17 @@ import PageMain from "./components/PageMain";
 import PageInfo from "./components/PageInfo";
 
 import { routes } from "./constants/routes";
+// import storeWaterMachine from "./stores/storeWaterMachine";
 
 import "./App.scss";
 
 function App() {
+  // useEffect(() => {
+  //   storeWaterMachine.fetchWaterMachineData();
+  // }, []);
+
+  // console.log(storeWaterMachine.data, storeWaterMachine.isLoading);
+
   return (
     <div className="pageWrapper">
       <Router>
