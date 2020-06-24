@@ -1,39 +1,23 @@
 import React, { useEffect, useState, useMemo } from "react";
+import { inject, observer } from "mobx-react";
 
 import Loader from "../Loader";
 import Phones from "../Phones";
 import Callout from "../Callout";
-import PageInfo from "../PageInfo";
 
 import { waterAmountLabel } from "../../utils/formats";
-import { isLitersValid, isMoneyValid } from "../../utils/validation";
-import { responseStatuses } from "../../constants/statuses";
 import {
-  getDiscountMessage,
-  getMessageNoEnoughWater,
-} from "../../utils/messages";
+  isLitersValid,
+  isMoneyValid,
+  getValidationMessage,
+} from "../../utils/validation";
+import { errorHandling } from "../../utils/errorsHandling";
 import config from "../../config";
 
-const initialState = {
-  automate_number: 0,
-  town: "",
-  street: "",
-  build: 0,
-  phones: [],
-  maxLiters: 50, // TODO: need to delete
-  water_available: 0,
-  price: 0,
-  discounts: [],
-  status: "OK",
-  error: "OK",
-};
-
-const PageMain = () => {
-  const [data, setData] = useState(initialState);
+const PageMain = ({ storeWaterMachine }) => {
+  const { data, isLoading, error } = storeWaterMachine;
   const [wantToPay, setWantToPay] = useState(false);
   const [isCardPaymentMethod, setCardCardPaymentMethod] = useState(false);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [inputsData, setInputsData] = useState({
     info: {
       message: "",
@@ -46,7 +30,7 @@ const PageMain = () => {
   const getDiscount = (liters) => {
     const discountItem = data.discounts.find(
       (item) =>
-        Number(liters) >= item.start_range && Number(liters) < item.end_range
+        Number(liters) >= item.startRange && Number(liters) < item.endRange
     );
 
     return discountItem ? discountItem.discount / 100 : 0;
@@ -74,40 +58,21 @@ const PageMain = () => {
     };
   };
 
-  const getValidationMessage = (discount, liters, maxLiters) => {
-    if (liters > maxLiters) {
-      return {
-        message: getMessageNoEnoughWater(maxLiters),
-        messageType: "error",
-      };
-    } else if (Number(discount) !== 0) {
-      return {
-        message: getDiscountMessage(discount),
-        messageType: "info",
-      };
-    }
-
-    return {
-      message: "",
-      messageType: "info",
-    };
-  };
-
   const onChangeLiters = (event) => {
     const liters = event.target.value;
 
     if (isLitersValid(liters)) {
-      const { water_available } = data;
+      const { waterAvailable } = data;
       const { discount, money } = getMoneyByLiters(
         event.target.value,
-        data.price
+        data.price / 100
       );
 
       setInputsData({
         ...inputsData,
         money,
         liters: liters,
-        info: getValidationMessage(discount, liters, water_available),
+        info: getValidationMessage(discount, liters, waterAvailable),
       });
     }
   };
@@ -116,17 +81,17 @@ const PageMain = () => {
     const money = event.target.value;
 
     if (isMoneyValid(money)) {
-      const { water_available } = data;
+      const { waterAvailable } = data;
       const { discount, liters } = getLitersByMoney(
         event.target.value,
-        data.price
+        data.price / 100
       );
 
       setInputsData({
         ...inputsData,
         liters,
         money: money,
-        info: getValidationMessage(discount, liters, water_available),
+        info: getValidationMessage(discount, liters, waterAvailable),
       });
     }
   };
@@ -139,29 +104,12 @@ const PageMain = () => {
     setCardCardPaymentMethod(!isCardPaymentMethod);
   };
 
-  const getWaterMachineData = async () => {
-    try {
-      // const waterMachine = await fetch(LINK_GET_DATA);
-      // const waterMachineAvailable = await fetch(LINK_GET_DATA);
-
-      setData({
-        ...initialState,
-      });
-    } catch (error) {
-      setError(
-        new Error("При отримання даних платiжної сторiнки. Выникла помилка.")
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const loader = useMemo(() => {
-    return loading && !data ? <Loader /> : null;
-  }, [loading, data]);
+    return isLoading ? <Loader /> : null;
+  }, [isLoading]);
 
   useEffect(() => {
-    getWaterMachineData();
+    storeWaterMachine.fetchWaterMachineData();
   }, []);
 
   useEffect(() => {
@@ -180,7 +128,7 @@ const PageMain = () => {
             height: 60,
           },
           data: {
-            merchant_id: config.merchant_id,
+            merchant_id: config.merchantId,
             currency: config.currency,
             amount: inputsData.money,
           },
@@ -194,27 +142,12 @@ const PageMain = () => {
     }
   }, [wantToPay, isCardPaymentMethod, inputsData.money]);
 
-  console.log(error);
-
-  if (data.error === responseStatuses.error || error.message) {
-    throw new Error("Виникла помилка при отриманнi данних платіжної сторінки.");
-  }
-
-  if (data.status === responseStatuses.error) {
-    throw new Error("На данний момент продаж води в водоматі не доступний.");
-  }
+  errorHandling(error || data ? data.status : "");
 
   return (
     <>
       {loader}
-      {error ? (
-        <PageInfo
-          textHeader="Виникла помилка"
-          textDescription={error.message}
-          type="error"
-        />
-      ) : null}
-      {!error ? (
+      {!isLoading && data ? (
         <>
           <header className="box">
             <h1>Придбання води в водоматi</h1>
@@ -291,4 +224,4 @@ const PageMain = () => {
   );
 };
 
-export default PageMain;
+export default inject("storeWaterMachine")(observer(PageMain));

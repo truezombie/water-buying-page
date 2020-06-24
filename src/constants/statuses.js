@@ -1,4 +1,11 @@
-export const responseStatuses = {
-  ok: "OK",
-  error: "ERROR",
+export const statusesServer = {
+  OK: "OK",
+  SALES_STOPPED: "SALES_STOPPED",
+  DOES_NOT_WORK: "DOES_NOT_WORK",
+  CONNECTION_FAIL: "CONNECTION_FAIL",
+  AUTOMATE_NOT_FOUND: "AUTOMATE_NOT_FOUND",
+};
+
+export const statusesClient = {
+  UNDEFINED_ERROR: "UNDEFINED_ERROR",
 };

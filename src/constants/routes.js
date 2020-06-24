@@ -1,5 +1,5 @@
 export const routes = {
-  notFoundWaterMachine: "/",
+  main: "/",
   waterMachine: "/:id",
   success: "/success",
 };

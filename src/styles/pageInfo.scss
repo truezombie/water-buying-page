@@ -5,13 +5,22 @@
   justify-content: center;
   box-sizing: border-box;
   &-header {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     margin: 0 0 1rem 0;
     color: $color_primary_main;
+    text-align: center;
   }
   &-description {
     margin: 0;
     line-height: 2rem;
+    text-align: center;
+  }
+
+  &-contacts {
+    text-align: center;
+    font-size: 0.95rem;
+    margin: 1rem 0 0 0;
+    line-height: 1.6rem;
   }
 
   &.success {

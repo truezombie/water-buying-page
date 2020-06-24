@@ -1,12 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider } from "mobx-react";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
 
+import { StoreWaterMachine } from "./stores";
+
+const stores = {
+  storeWaterMachine: new StoreWaterMachine(),
+};
+
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <Provider {...stores}>
+      <App />
+    </Provider>
   </React.StrictMode>,
   document.getElementById("root")
 );
